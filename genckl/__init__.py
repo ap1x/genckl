@@ -9,7 +9,7 @@ def run():
 
     # setup arg parser
     parser = argparse.ArgumentParser(
-        description='Generate a STIG Viewer checklist file.')
+        prog='genckl', description='Generate a STIG Viewer checklist file.')
     parser.add_argument('-o', '--output', default=sys.stdout,
                         help='output filename', metavar='FILE')
     parser.add_argument('-r', '--run-commands', action='store_true',
