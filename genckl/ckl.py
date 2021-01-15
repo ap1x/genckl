@@ -241,49 +241,49 @@ class Xccdf():
         tree = ElementTree.parse(xml)
         xml.close()
 
-        # setup xml namespace, ugly but best way with ElementTree
+        # setup xml namespace with default tag d, this is ugly, needfix
         self.ns = None
         if tree.getroot().tag[0] == '{':
-            self.ns = {'': tree.getroot().tag.split('}')[0][1:]}
+            self.ns = {'d': tree.getroot().tag.split('}')[0][1:]}
             for e in tree.iter():
                 if e.tag[-6:] == 'source':
                     self.ns['dc'] = e.tag.split('}')[0][1:]
                     break
 
         # build attrs dictionary
-        self.attrs['version'] = tree.find('version', self.ns).text
+        self.attrs['version'] = tree.find('d:version', self.ns).text
         # NEEDFIX dont know where this value is coming from see ckl file
         self.attrs['classification'] = ''
         self.attrs['customname'] = ''
         self.attrs['stigid'] = tree.getroot().get('id')
-        self.attrs['description'] = tree.find('description', self.ns).text
+        self.attrs['description'] = tree.find('d:description', self.ns).text
         self.attrs['filename'] = os.path.basename(xml.name)
-        self.attrs['releaseinfo'] = tree.find('plain-text', self.ns).text
-        self.attrs['title'] = tree.find('title', self.ns).text
+        self.attrs['releaseinfo'] = tree.find('d:plain-text', self.ns).text
+        self.attrs['title'] = tree.find('d:title', self.ns).text
 
         # this is not a bug, within ckl all vulns have same uuid (the xccdf uuid),
         # but "STIG_INFO" uuid differs, open a ckl as text and see for yourself...
         self.attrs['uuid'] = str(uuid.uuid4())
 
-        self.attrs['notice'] = tree.find('notice', self.ns).get('id')
+        self.attrs['notice'] = tree.find('d:notice', self.ns).get('id')
         self.attrs['source'] = tree.find(
-            'reference', self.ns).find('dc:source', self.ns).text
+            'd:reference', self.ns).find('dc:source', self.ns).text
 
         # get result info (if any), set that we have results
-        if tree.find('TestResult', self.ns):
-            testresult_el = tree.find('TestResult', self.ns)
+        if tree.find('d:TestResult', self.ns):
+            testresult_el = tree.find('d:TestResult', self.ns)
             self.results_tool = testresult_el.get('test-system')
             self.results_time = testresult_el.get('start-time')
             self.hasresults = True
 
         # add the vulns
-        for vuln_el in tree.findall('Group', self.ns):
+        for vuln_el in tree.findall('d:Group', self.ns):
 
             # check if any result elements apply to this vuln
             result = None
             if self.hasresults:
-                for result_el in tree.find('TestResult', self.ns).findall('rule-result', self.ns):
-                    if vuln_el.find('Rule', self.ns).get('id') == result_el.get('idref'):
+                for result_el in tree.find('d:TestResult', self.ns).findall('d:rule-result', self.ns):
+                    if vuln_el.find('d:Rule', self.ns).get('id') == result_el.get('idref'):
                         result = result_el
 
             self.vulns.append(Vuln(vuln_el, self, result, self.ns))
@@ -426,28 +426,28 @@ class Vuln():
         self.severity_justification = ''
 
         # build attrs dictionary
-        rule = element.find('Rule', self.ns)
+        rule = element.find('d:Rule', self.ns)
         self.attrs['Vuln_Num'] = element.attrib.get('id')
         self.attrs['Severity'] = rule.get('severity')
-        self.attrs['Group_Title'] = element.find('title', self.ns).text
+        self.attrs['Group_Title'] = element.find('d:title', self.ns).text
         self.attrs['Rule_ID'] = rule.get('id')
-        self.attrs['Rule_Ver'] = rule.find('version', self.ns).text
-        self.attrs['Rule_Title'] = rule.find('title', self.ns).text
+        self.attrs['Rule_Ver'] = rule.find('d:version', self.ns).text
+        self.attrs['Rule_Title'] = rule.find('d:title', self.ns).text
 
         # parse the xml inside the rule description text
         desc_el = ElementTree.fromstring(
-            '<desc>'+rule.find('description', self.ns).text+'</desc>')
+            '<desc>'+rule.find('d:description', self.ns).text+'</desc>')
         self.attrs['Vuln_Discuss'] = desc_el.find('VulnDiscussion').text
         self.attrs['IA_Controls'] = desc_el.find('IAControls').text
 
         # result xccdfs usually don't have this field, need to be careful
         self.attrs['Check_Content'] = None
-        check_con_el = rule.find('check', self.ns).find(
-            'check-content', self.ns)
+        check_con_el = rule.find('d:check', self.ns).find(
+            'd:check-content', self.ns)
         if ElementTree.iselement(check_con_el):
             self.attrs['Check_Content'] = check_con_el.text
 
-        self.attrs['Fix_Text'] = rule.find('fixtext', self.ns).text
+        self.attrs['Fix_Text'] = rule.find('d:fixtext', self.ns).text
         self.attrs['False_Positives'] = desc_el.find('FalsePositives').text
         self.attrs['False_Negatives'] = desc_el.find('FalseNegatives').text
         self.attrs['Documentable'] = desc_el.find('Documentable').text
@@ -459,8 +459,8 @@ class Vuln():
         self.attrs['Responsibility'] = desc_el.find('Responsibility').text
         self.attrs['Security_Override_Guidance'] = desc_el.find(
             'SeverityOverrideGuidance').text
-        self.attrs['Check_Content_Ref'] = rule.find('check', self.ns).find(
-            'check-content-ref', self.ns).get('name')
+        self.attrs['Check_Content_Ref'] = rule.find('d:check', self.ns).find(
+            'd:check-content-ref', self.ns).get('name')
         self.attrs['Weight'] = rule.get('weight')
         # NEEDFIX dont know where this is coming from
         # (could be from filename starts with "U_" means unclass? "U_RHEL_7_STIG_V3R1_Manual-xccdf.xml")
@@ -468,11 +468,11 @@ class Vuln():
         self.attrs['Class'] = ''
         self.attrs['STIGRef'] = self.getparent().getref()
         self.attrs['TargetKey'] = rule.find(
-            'reference', self.ns).find('dc:identifier', self.ns).text
+            'd:reference', self.ns).find('dc:identifier', self.ns).text
         self.attrs['STIG_UUID'] = self.getparent().getuuid()
 
         # setup list for legacy ID's, CCI References
-        for ident in rule.findall('ident', self.ns):
+        for ident in rule.findall('d:ident', self.ns):
             # account for both "SV-86483" and "V-71859"
             if ident.text[0:2] == 'V-' or ident.text[1:3] == 'V-':
                 self.legacy_ids.append(ident.text)
@@ -481,7 +481,7 @@ class Vuln():
 
         # update result vars if we got result
         if result_element:
-            result = result_element.find('result', self.ns).text
+            result = result_element.find('d:result', self.ns).text
             if result == 'pass':
                 self.status = Vuln.STATUS_NOT_A_FINDING
             if result == 'fail':
