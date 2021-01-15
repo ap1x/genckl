@@ -7,19 +7,22 @@ from . import ckl
 
 def run():
 
+    description = 'Generate a STIG Viewer checklist file.'
+
     # setup arg parser
-    parser = argparse.ArgumentParser(
-        prog='genckl', description='Generate a STIG Viewer checklist file.')
+    parser = argparse.ArgumentParser(prog='genckl', description=description)
+
     parser.add_argument('-o', '--output', default=sys.stdout,
-                        help='output filename', metavar='FILE')
+                        help='output filename, defaults to standard output', metavar='FILE')
     parser.add_argument('-r', '--run-commands', action='store_true',
                         help='enable template command execution')
     parser.add_argument('-s', '--set-hostdata', action='store_true',
                         help='set checklist host data based on localhost')
+
+    # NEEDFIX add support for yaml templates, csv might not always be so great
     parser.add_argument('-t', '--template', action='append',
-                        help='checklist template filename, can be specified multiple times', metavar='FILE')  # NEEDFIX add support for yaml templates
-    parser.add_argument(
-        '--template-dir', help='NOT IMPLEMENTED', metavar='DIR')  # NEEDFIX
+                        help='checklist template filename, can be specified multiple times', metavar='FILE')
+    #parser.add_argument('--template-dir', help='NOT IMPLEMENTED', metavar='DIR')  # NEEDFIX
     parser.add_argument('-V', '--version', action='version',
                         version='%(prog)s '+__version__)
     parser.add_argument('input_files', nargs='+',
