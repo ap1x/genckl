@@ -1,0 +1,4 @@
+include LICENSE
+include pyproject.toml
+include REAME.rst
+include docs/*
