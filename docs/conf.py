@@ -10,6 +10,7 @@ year = str(datetime.datetime.now().year)
 
 
 # project information vars
+master_doc = 'manual'
 project = __name__
 author = 'ap1x'
 copyright = year+', '+author
