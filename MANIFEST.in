@@ -1,5 +1,5 @@
 include genckl.spec
 include LICENSE
 include pyproject.toml
-include REAME.rst
+include README.rst
 include docs/*
