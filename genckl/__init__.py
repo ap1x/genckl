@@ -7,12 +7,14 @@ from . import ckl
 prog = 'genckl'
 usage = prog+' [options] FILE [FILE ...]'
 description = 'Generate a ckl file based on STIG zip and/or xccdf file(s)'
+epilog = 'Full documentation available locally via: \'man genckl\''
 
 
 def run():
 
     # setup arg parser
-    parser = argparse.ArgumentParser(prog=prog, usage=usage, description=description)
+    parser = argparse.ArgumentParser(
+        prog=prog, usage=usage, description=description, epilog=epilog)
 
     parser.add_argument('-o', '--output', default=sys.stdout,
                         help='output filename, defaults to standard output', metavar='FILE')
