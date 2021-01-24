@@ -1,6 +1,6 @@
 .vscode
 __pycache__
 *.egg-info
-build
+*build
 dist
 clean.sh
