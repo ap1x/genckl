@@ -44,12 +44,9 @@ CHECKLIST TEMPLATES
 ===================
 
 A checklist template file is a **csv** spreadsheet in which each row represents a Vulnerability (also called a "Rule") 
-and each column represents a Vulnerability Attribute. The first row in the spreadsheet defines the Vulnerability 
-Attribute names and column order, it is required.
-
-Checklist template files can be created or modified with graphical tools such as *LibreOffice Calc* or *MS Excel*, as 
-long as the file is saved in **csv** format. A text editor such as *vim* can also be used to create a checklist 
-template (since **csv** files are just plain text).
+and each column represents a Vulnerability Attribute. Checklist template files can be created or modified with 
+graphical spreadsheet editors, as long as the file is saved in **csv** format. A simple text editor such could also be 
+used to create a checklist template (since **csv** files are just plain text).
 
 The example below shows a basic checklist template spreadsheet:
 
@@ -68,6 +65,36 @@ The example below shows a basic checklist template spreadsheet:
 | V-000004 | Not A Finding  | see SPLANK log         |                        |
 +----------+----------------+------------------------+------------------------+
 
+The first row in the spreadsheet defines the Vulnerability Attribute(s) to be modified, it is required, but can be 
+customized. The columns may be in any order. The only required Vulnerability Attribute is "ID", meaning a (useful) 
+template spreadsheet could be as little as 2 columns, one for "ID" and one for the single Vulnerability Attribute to be 
+modified. The first row is not case or whitespace sensitive, for example, "finDingDETAILs" is valid.
+
+Each row after the first should have a value in the "ID" column matching the ID of the Vulnerability to be modified, 
+and values for any Vulnerability Attributes to be modified in the matching columns. The rows can be in any order. Any 
+blank values in a row are ignored and the Vulnerability Attributes are left untouched. If a row does not match any 
+Vulnerability ID it is ignored.
+
+The below list contains all available Vulnerability Attributes and accepted values:
+
+- **ID**
+    Should use format "V-000000"
+
+- **Status**
+    Should be "Not Reviewed", "Open", "Not A Finding", or "Not Applicable"; variation in case or whitespace is allowed
+
+- **Finding Details**
+    any text allowed
+
+- **Comments**
+    any text allowed
+
+- **Severity Override**
+    Should be "Cat I", "Cat II", or "Cat III"; variation in case or whitespace is allowed; digits are allowed ("cat 3")
+
+- **Severity Override Justification**
+    any text allowed
+
 
 .. NEEDFIX TODO
 
@@ -79,33 +106,21 @@ checklist templates support running commands
 .. Additional notes on Checklist templates
 .. ---------------------------------------
 
-.. order doesnt matter both column and row
-
 .. REPLACE MODE ONLY
 
-.. Vulns not found in input files are ignored
-
-.. FIRST ROW is not sesnitive to case or whitespace
-
-.. Severity Override is not sesnitive to case or whitespace or digit vs numeral (2 vs II)
-
-..  - ID
-..  - Status
-..  - Finding Details
-..  - Comments
-..  - Severity Override
-..  - Severity Override Justification
+.. gotcha with libreoffice calc need to turn off "smart quotes" so proper utf quotes (") are used
 
 EXAMPLES
 ========
 
-.. Most basic example, this will produce::
+Most basic example, this will generate a ckl from a single xccdf (including results, if any) and print it to standard 
+output::
 
-..     genckl xccdf.xml
+    genckl foo-xccdf.xml
 
-.. Generate a checklist from 2 stigs and 1 results xccdf::
+Generate a checklist from 2 stigs and 1 results xccdf::
 
-..     genckl STIG1.zip stig2.xml xccdf-results.xml
+    genckl stig1.zip stig2-xccdf.xml bar-results-xccdf.xml
 
 
 COPYRIGHT
