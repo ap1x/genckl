@@ -169,7 +169,8 @@ class Ckl():
                 if vulntemp['id'] == vuln.getid():
 
                     # set status
-                    status = vulntemp['status'].replace(' ', '').lower()
+                    status = vulntemp.get(
+                        'status', '').replace(' ', '').lower()
                     if status == 'notreviewed':
                         vuln.status = Vuln.STATUS_NOT_REVIEWED
                     elif status == 'open':
@@ -179,18 +180,23 @@ class Ckl():
                     elif status == 'notapplicable':
                         vuln.status = Vuln.STATUS_NOT_APPLICABLE
 
-                    # set finding details and comments
-                    if runcmds:
-                        vuln.finding_details = runinlinecmds(
-                            vulntemp['findingdetails'])
-                        vuln.comments = runinlinecmds(vulntemp['comments'])
-                    else:
+                    # set finding details
+                    if vulntemp.get('findingdetails'):
+                        if runcmds:
+                            vulntemp['findingdetails'] = runinlinecmds(
+                                vulntemp['findingdetails'])
                         vuln.finding_details = vulntemp['findingdetails']
+
+                    # set comments
+                    if vulntemp.get('comments'):
+                        if runcmds:
+                            vulntemp['comments'] = runinlinecmds(
+                                vulntemp['comments'])
                         vuln.comments = vulntemp['comments']
 
                     # set severity override
-                    sevover = vulntemp['severityoverride'].replace(
-                        ' ', '').lower()
+                    sevover = vulntemp.get(
+                        'severityoverride', '').replace(' ', '').lower()
                     if sevover == 'cati' or sevover == 'cat1':
                         vuln.severity_override = Vuln.SEVERITY_CAT_I
                     elif sevover == 'catii' or sevover == 'cat2':
@@ -199,7 +205,8 @@ class Ckl():
                         vuln.severity_override = Vuln.SEVERITY_CAT_III
 
                     # set severity override justification
-                    vuln.severity_justification = vulntemp['severityoverridejustification']
+                    if vulntemp.get('severityoverridejustification'):
+                        vuln.severity_justification = vulntemp['severityoverridejustification']
 
     def sethostdata(self):
         '''Set this Ckl's host data from the local host.'''
