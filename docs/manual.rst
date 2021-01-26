@@ -77,24 +77,14 @@ Vulnerability ID it is ignored.
 
 The below list contains all available Vulnerability Attributes and accepted values:
 
-- **ID**
-    Should use format "V-000000"
-
-- **Status**
-    Should be "Not Reviewed", "Open", "Not A Finding", or "Not Applicable"; variation in case or whitespace is allowed
-
-- **Finding Details**
-    any text allowed
-
-- **Comments**
-    any text allowed
-
-- **Severity Override**
-    Should be "Cat I", "Cat II", or "Cat III"; variation in case or whitespace is allowed; digits are allowed ("cat 3")
-
-- **Severity Override Justification**
-    any text allowed
-
+- **ID**: Should use format "V-000000"
+- **Status**: Should be "Not Reviewed", "Open", "Not A Finding", or "Not Applicable"; variation in case or whitespace 
+  is allowed
+- **Finding Details**: any text allowed
+- **Comments**: any text allowed
+- **Severity Override**: Should be "Cat I", "Cat II", or "Cat III"; variation in case or whitespace is allowed; digits 
+  are allowed ("cat 3")
+- **Severity Override Justification**: any text allowed
 
 .. NEEDFIX TODO
 
