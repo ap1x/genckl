@@ -45,8 +45,8 @@ CHECKLIST TEMPLATES
 
 A checklist template file is a **csv** spreadsheet in which each row represents a Vulnerability (also called a "Rule") 
 and each column represents a Vulnerability Attribute. Checklist template files can be created or modified with 
-graphical spreadsheet editors, as long as the file is saved in **csv** format. A simple text editor such could also be 
-used to create a checklist template (since **csv** files are just plain text).
+graphical spreadsheet editors, as long as the file is saved in **csv** format. A simple text editor could also be used 
+to create a checklist template (since **csv** files are just plain text).
 
 The example below shows a basic checklist template spreadsheet:
 
