@@ -14,7 +14,7 @@ DESCRIPTION
 
 The **genckl** utility generates a STIG Viewer checklist (**ckl**) file based on one or more input *FILE*\ s, which can 
 be either STIG **zip**, or xccdf **xml**. If an input *FILE* is a zip, the xccdf xml file within the zip is used as 
-input. If xccdf results are found in any of the input files, they are included in the output checklist. 
+input. If xccdf results are found in any of the input files, they are included in the output checklist.
 
 
 OPTIONS
@@ -86,12 +86,36 @@ The below list contains all available Vulnerability Attributes and accepted valu
   are allowed ("cat 3")
 - **Severity Override Justification**: any text allowed
 
-.. NEEDFIX TODO
-
 Template Commands
 -----------------
 
-checklist templates support running commands
+The **Finding Details** and **Comments** Vulnerability Attributes within a checklist may contain template commands. A 
+template command is a block of text starting and ending with "<cmd>". A mixture of normal text and template commands 
+within the same Vulnerability Attribute cell is allowed. By default template commands are treated as normal text. When 
+the ``--run-commands`` option is given, template commands are executed on the local host, and command output replaces 
+the template command text within the Vulnerability Attribute cell. For example, if the ``--run-commands`` option is 
+given and following checklist template is applied:
+
++----------+--------------------------------------+
+| **ID**   | **Finding Details**                  |
++==========+======================================+
+| V-000001 | foo text                             |
+|          |                                      |
+|          | <cmd>sh -c 'bar | grep success'<cmd> |
+|          |                                      |
+|          | baz text                             |
++----------+--------------------------------------+
+
+The output checklist vulnerability **Finding Details** text will contain::
+
+    foo text
+
+    bar: success
+
+    baz text
+
+Note that if you want to use shell features like pipes, you will need to start a shell as shown in the above example. 
+Template commands are executed directly and no shell is started by default.
 
 .. Additional notes on Checklist templates
 .. ---------------------------------------
@@ -100,17 +124,27 @@ checklist templates support running commands
 
 .. gotcha with libreoffice calc need to turn off "smart quotes" so proper utf quotes (") are used
 
+.. input file processing order / template processing order
+
 EXAMPLES
 ========
 
-Most basic example, this will generate a ckl from a single xccdf (including results, if any) and print it to standard 
-output::
+Most basic example, generate a ckl from a single xccdf, print it to standard output::
 
-    genckl foo-xccdf.xml
+    genckl foo_xccdf.xml
 
-Generate a checklist from 2 stigs and 1 results xccdf::
+Generate a ckl from 2 STIGs and 1 results xccdf, print it to standard output::
 
-    genckl stig1.zip stig2-xccdf.xml bar-results-xccdf.xml
+    genckl foo_stig.zip bar_stig.xml baz_xccdf_results.xml
+
+Generate a ckl from a STIG and results, apply a checklist template, and save the checklist to the file output.ckl::
+
+    genckl -o output.ckl -t foo_template.csv bar_stig.zip baz_xccdf_results.xml
+
+Generate a ckl, apply a checklist template, run checklist template commands, set the checklist "Target Data" fields 
+based on localhost, print it to standard output::
+
+    genckl -t foo_template.csv -r -s bar_xccdf.xml
 
 
 COPYRIGHT
